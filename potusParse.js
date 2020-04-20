@@ -75,7 +75,7 @@ router.post('/', function(req, res, next) {
 		}
 	}
 
-	else if(req.body.reqType == 'aboutTextScrap'){
+	else if(req.body.reqType == 'aboutTextScrap'){ // HTML scrap
 
 		console.log("aboutTextScrap calling")
 		var keyword = req.body.keyword;
@@ -104,6 +104,44 @@ router.post('/', function(req, res, next) {
 						res.json({"status":'false',"data":"", "message" : "Scraping is not allowed"});
 					});
 					///Scraper run
+				}
+			)
+			.catch(function (err)
+			{
+				res.json({status: 'false',message : 'Something went wrong'})
+			});
+		}
+	}
+
+	else if(req.body.reqType == 'p_selectorScrap'){ // P tag scrap
+
+		console.log("p_selectorScrap calling")
+		var keyword = req.body.keyword;
+		if(!keyword.trim() ||keyword == undefined || keyword== null){
+			res.json({status: 'false',message : 'Keyword can not blank'})
+		}
+		else{
+			keyword=keyword+" aboutus";
+			fetch('https://www.googleapis.com/customsearch/v1?key=AIzaSyCFkEVLPFknrAtMbdelG8lxLLdaEaJ6gdM&cx=008904969361411019302:prrfelrwnlk&q='+keyword, {
+			"method": "GET"
+			})
+			.then(res => res.json())
+			.then(json =>
+				{
+					///Scraper run start
+					var url = json.items[0].link;
+					let text='';
+					rp(url).then(function(html) {
+						$('p',html).each(function(i, elem) {
+							text+=$(this).text()+"\n\n";
+						});
+						// console.log(text)
+						res.json({"status":'true',"data":text,"message":"Scraper worked"})
+					})
+					.catch(function(err) {
+						res.json({"status":'false',"data":"", "message" : "Scraping is not allowed"});
+					});
+					///Scraper run end
 				}
 			)
 			.catch(function (err)
