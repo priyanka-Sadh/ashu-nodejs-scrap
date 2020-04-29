@@ -1,4 +1,4 @@
-# ashu-nodejs-scrap
+# nodejs-scrap
 
 1. Go the the root folder on Terminal.
 2. run `npm install`
